@@ -13,6 +13,7 @@ Tarneeb is a trick-taking card game played by four players in teams of two, with
 - Multiplayer gameplay through local networking.
 - Score tracking and history of played rounds.
 - Customizable card decks and table backgrounds.
+![Simulator Screenshot - iPhone 15 - 2024-02-29 at 01 46 10](https://github.com/mikhailajaj/CARDS_HOUSE-react-native-/assets/38083764/1e3288bc-dea6-4aac-8f0a-fdeea47e291c)
 
 ## Getting Started
 
@@ -32,27 +33,25 @@ Before running the project, ensure you have the following installed:
 
 2. Navigate to the project directory:
     ```bash
-cd tarneeb-react-native
+   cd tarneeb-react-native
 
 Install dependencies:
- ```bash
+```bash
 npm install
 
 or if you prefer yarn:
-```bash
-yarn install
+   ```bash
+   yarn install
 
 Running the Game
 To run the game on an Android device/emulator:
 
-```bash
-
-npx react-native run-android
+   ```bash
+   npx react-native run-android
 To run the game on an iOS simulator:
 
-```bash
-
-npx react-native run-ios
+   ```bash
+   npx react-native run-ios
 
 License
 This project is licensed under the MIT License - see the LICENSE.md file for details.
