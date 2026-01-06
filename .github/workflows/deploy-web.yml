@@ -36,12 +36,21 @@ jobs:
         npm install
     
     - name: Export web build
-      run: npm run build:web:gh-pages
+      run: npm run build:web
       env:
         NODE_ENV: production
     
-    - name: Add .nojekyll file
-      run: touch web-build/.nojekyll
+    - name: Fix paths for GitHub Pages subpath
+      run: |
+        cd web-build
+        # Add .nojekyll file
+        touch .nojekyll
+        # Fix index.html paths to include base path
+        sed -i 's|href="/|href="/CARDS_HOUSE-react-native-/|g' index.html
+        sed -i 's|src="/|src="/CARDS_HOUSE-react-native-/|g' index.html
+        # Display the updated index.html for verification
+        echo "Updated index.html:"
+        cat index.html
     
     - name: Setup Pages
       uses: actions/configure-pages@v4
