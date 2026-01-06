@@ -45,9 +45,15 @@ jobs:
         cd web-build
         # Add .nojekyll file
         touch .nojekyll
-        # Fix index.html paths to include base path
+        # Fix paths in index.html
         sed -i 's|href="/|href="/CARDS_HOUSE-react-native-/|g' index.html
         sed -i 's|src="/|src="/CARDS_HOUSE-react-native-/|g' index.html
+        # Fix paths in all JavaScript files (they contain hardcoded asset paths)
+        find _expo -type f -name "*.js" -exec sed -i 's|"/_expo/|"/CARDS_HOUSE-react-native-/_expo/|g' {} +
+        find _expo -type f -name "*.js" -exec sed -i "s|'/_expo/|'/CARDS_HOUSE-react-native-/_expo/|g" {} +
+        # Fix paths for assets
+        find _expo -type f -name "*.js" -exec sed -i 's|"/assets/|"/CARDS_HOUSE-react-native-/assets/|g' {} +
+        find _expo -type f -name "*.js" -exec sed -i "s|'/assets/|'/CARDS_HOUSE-react-native-/assets/|g" {} +
         # Display the updated index.html for verification
         echo "Updated index.html:"
         cat index.html
