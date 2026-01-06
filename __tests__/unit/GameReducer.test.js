@@ -232,7 +232,7 @@ describe('GameReducer - SELECT_TRUMP Action', () => {
 
 describe('GameReducer - PLAY_CARD Action', () => {
   
-  test('GR-017: Legal card play removes card from hand', () => {
+  test('GR-017a: PLAY_CARD keeps card in hand for animation', () => {
     const card = { suit: 'Hearts', label: 'Ace', value: 14 };
     const state = {
       ...initialGameState,
@@ -253,6 +253,33 @@ describe('GameReducer - PLAY_CARD Action', () => {
       payload: { playerIndex: 0, card }
     });
     
+    // Card should remain in hand during animation
+    expect(newState.players[0].hand).toHaveLength(1);
+    expect(newState.players[0].hand[0]).toEqual(card);
+  });
+
+  test('GR-017b: ADD_CARD_TO_TRICK_AREA removes card from hand', () => {
+    const card = { suit: 'Hearts', label: 'Ace', value: 14 };
+    const state = {
+      ...initialGameState,
+      phase: GAME_PHASES.PLAYING,
+      players: [
+        { ...initialGameState.players[0], hand: [card] },
+        ...initialGameState.players.slice(1)
+      ],
+      playing: {
+        ...initialGameState.playing,
+        currentPlayer: 0,
+        currentTrick: []
+      }
+    };
+    
+    const newState = gameReducer(state, {
+      type: GAME_ACTIONS.ADD_CARD_TO_TRICK_AREA,
+      payload: { playerIndex: 0, card }
+    });
+    
+    // Card should be removed after animation completes
     expect(newState.players[0].hand).toHaveLength(0);
   });
 

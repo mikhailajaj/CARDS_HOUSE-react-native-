@@ -26,11 +26,11 @@ describe('Card Component', () => {
   });
 
   test('C-002: Renders with custom width', () => {
-    const { container } = render(
+    const { getByTestId } = render(
       <Card card={mockCard} onPress={() => {}} cardWidth={120} />
     );
     
-    expect(container).toBeTruthy();
+    expect(getByTestId('card-touchable')).toBeTruthy();
   });
 
   test('C-003: onPress callback fires when pressed', () => {
@@ -60,11 +60,11 @@ describe('Card Component', () => {
   });
 
   test('C-005: Handles null card gracefully', () => {
-    const { container } = render(
+    const { getByTestId } = render(
       <Card card={null} onPress={() => {}} />
     );
     
-    expect(container).toBeTruthy();
+    expect(getByTestId('card-touchable')).toBeTruthy();
   });
 
   test('C-006: Renders different suits correctly', () => {
@@ -72,11 +72,11 @@ describe('Card Component', () => {
     
     suits.forEach(suit => {
       const card = { suit, label: 'King', value: 13 };
-      const { container } = render(
+      const { getByTestId } = render(
         <Card card={card} onPress={() => {}} />
       );
       
-      expect(container).toBeTruthy();
+      expect(getByTestId('card-touchable')).toBeTruthy();
     });
   });
 });

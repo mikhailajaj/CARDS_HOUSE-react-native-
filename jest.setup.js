@@ -1,15 +1,15 @@
 // Jest setup file for additional configuration
 import '@testing-library/jest-native/extend-expect';
 
-// Mock console methods to reduce noise in tests (optional)
+// Mock console methods to reduce noise in tests
 global.console = {
   ...console,
-  // Uncomment to suppress console output during tests
-  // log: jest.fn(),
-  // debug: jest.fn(),
-  // info: jest.fn(),
-  // warn: jest.fn(),
-  error: jest.fn(), // Keep error for debugging
+  // Suppress noisy logs and warnings in tests to reduce flakiness
+  log: console.log, // keep normal logs by default
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: console.error,
 };
 
 // Mock Animated for component tests
@@ -21,8 +21,33 @@ jest.mock('moti', () => ({
   AnimatePresence: ({ children }) => children,
 }));
 
-// Mock React Native components if needed
-jest.mock('react-native/Libraries/Components/Touchable/TouchableOpacity', () => {
-  const { TouchableOpacity } = require('react-native');
-  return TouchableOpacity;
+// Mock FontAwesome to avoid ESM issues in tests
+jest.mock('@fortawesome/react-native-fontawesome', () => ({
+  FontAwesomeIcon: () => null,
+}));
+
+// Mock AsyncStorage for tests (avoid native module)
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  getItem: jest.fn().mockResolvedValue(null),
+  setItem: jest.fn().mockResolvedValue(undefined),
+  removeItem: jest.fn().mockResolvedValue(undefined),
+}));
+
+// Global cleanup for timers to prevent teardown warnings
+const isUsingFakeTimers = () => typeof setTimeout === 'function' && !!(setTimeout.__isMock || (setTimeout.hasOwnProperty && setTimeout.hasOwnProperty('mock')) || (jest.isMockFunction && jest.isMockFunction(setTimeout)));
+afterEach(() => {
+  if (isUsingFakeTimers()) {
+    try { jest.runOnlyPendingTimers(); } catch {}
+    try { jest.clearAllTimers(); } catch {}
+    try { jest.useRealTimers(); } catch {}
+  }
+});
+
+// Extra safety: flush any remaining timers after all tests complete
+afterAll(() => {
+  if (isUsingFakeTimers()) {
+    try { jest.runOnlyPendingTimers(); } catch {}
+    try { jest.clearAllTimers(); } catch {}
+    try { jest.useRealTimers(); } catch {}
+  }
 });

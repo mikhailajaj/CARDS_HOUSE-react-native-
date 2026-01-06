@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { render } from '@testing-library/react-native';
+import { render, fireEvent } from '@testing-library/react-native';
 import Hand from '../../components/Hand';
 
 describe('Hand Component', () => {
@@ -17,7 +17,7 @@ describe('Hand Component', () => {
   ];
 
   test('H-001: Renders all cards in hand', () => {
-    const { container } = render(
+    const { getAllByTestId } = render(
       <Hand 
         cards={mockHand}
         onCardPress={() => {}}
@@ -25,11 +25,12 @@ describe('Hand Component', () => {
       />
     );
     
-    expect(container).toBeTruthy();
+    const cards = getAllByTestId('card-touchable');
+    expect(cards).toHaveLength(mockHand.length);
   });
 
   test('H-002: Fan layout displays correctly', () => {
-    const { container } = render(
+    const { getAllByTestId } = render(
       <Hand 
         cards={mockHand}
         onCardPress={() => {}}
@@ -38,11 +39,12 @@ describe('Hand Component', () => {
       />
     );
     
-    expect(container).toBeTruthy();
+    const cards = getAllByTestId('card-touchable');
+    expect(cards).toHaveLength(mockHand.length);
   });
 
   test('H-003: Linear layout displays correctly', () => {
-    const { container } = render(
+    const { getAllByTestId } = render(
       <Hand 
         cards={mockHand}
         onCardPress={() => {}}
@@ -51,7 +53,8 @@ describe('Hand Component', () => {
       />
     );
     
-    expect(container).toBeTruthy();
+    const cards = getAllByTestId('card-touchable');
+    expect(cards).toHaveLength(mockHand.length);
   });
 
   test('H-004: Legal cards have full opacity', () => {
@@ -100,7 +103,7 @@ describe('Hand Component', () => {
   test('H-007: Selected card is highlighted', () => {
     const selectedCard = mockHand[0];
     
-    const { container } = render(
+    const { getAllByTestId, getByRole } = render(
       <Hand 
         cards={mockHand}
         onCardPress={() => {}}
@@ -109,11 +112,16 @@ describe('Hand Component', () => {
       />
     );
     
-    expect(container).toBeTruthy();
+    // One card should be in selected accessibility state
+    const selected = getByRole('button', { selected: true });
+    expect(selected).toBeTruthy();
+
+    const cards = getAllByTestId('card-touchable');
+    expect(cards).toHaveLength(mockHand.length);
   });
 
   test('H-008: Handles empty hand', () => {
-    const { container } = render(
+    const { queryAllByTestId } = render(
       <Hand 
         cards={[]}
         onCardPress={() => {}}
@@ -121,11 +129,11 @@ describe('Hand Component', () => {
       />
     );
     
-    expect(container).toBeTruthy();
+    expect(queryAllByTestId('card-touchable')).toHaveLength(0);
   });
 
   test('H-009: Custom card width is applied', () => {
-    const { container } = render(
+    const { getAllByTestId } = render(
       <Hand 
         cards={mockHand}
         onCardPress={() => {}}
@@ -134,6 +142,7 @@ describe('Hand Component', () => {
       />
     );
     
-    expect(container).toBeTruthy();
+    const cards = getAllByTestId('card-touchable');
+    expect(cards).toHaveLength(mockHand.length);
   });
 });

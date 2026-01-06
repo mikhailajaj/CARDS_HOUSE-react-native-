@@ -57,16 +57,8 @@ const GameScreen = ({ navigation }) => {
     setScreenDimensions({ width, height });
   }, []);
 
-  // Wait for settings and score history to load before rendering
-  if (!isLoaded || !isScoreHistoryLoaded) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.modalContainer}>
-          <Text style={{ color: '#f4d03f', fontSize: 18 }}>Loading...</Text>
-        </View>
-      </View>
-    );
-  }
+  // Compute providers readiness (do not early-return before hooks)
+  const providersReady = !!isLoaded && !!isScoreHistoryLoaded;
 
   const handleStartGame = () => {
     setIsModalVisible(false);
@@ -887,6 +879,16 @@ const GameScreen = ({ navigation }) => {
   };
 
 
+
+  if (!providersReady) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.modalContainer}>
+          <Text style={{ color: '#f4d03f', fontSize: 18 }}>Loading...</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container} onLayout={handleLayout} ref={containerRef}>

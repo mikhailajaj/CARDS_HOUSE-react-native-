@@ -67,7 +67,7 @@ const cardImages = {
 
 const fallbackImage = require('../assets/img/cards/b1fv.png');
 
-const Card = ({ card, onPress, cardWidth = 80, isSelected = false }) => {
+const Card = ({ card, onPress, cardWidth = 80, isSelected = false, testID = 'card-touchable' }) => {
   const cardHeight = Math.round(cardWidth * 1.5);
   const scale = useRef(new Animated.Value(1)).current;
 
@@ -79,14 +79,17 @@ const Card = ({ card, onPress, cardWidth = 80, isSelected = false }) => {
     }).start();
   }, [isSelected]);
 
-  const source = cardImages[card.suit]?.[card.label] ?? fallbackImage;
+  const suit = card?.suit;
+  const label = card?.label;
+  const source = suit && label ? (cardImages[suit]?.[label] ?? fallbackImage) : fallbackImage;
 
   return (
     <Pressable
+      testID={testID}
       onPress={onPress}
-      accessibilityLabel={`${card.label} of ${card.suit}`}
+      accessibilityLabel={`${label ?? 'Card'} of ${suit ?? 'Unknown'}`}
       accessibilityRole="button"
-      accessibilityState={{ selected: isSelected }}
+      accessibilityState={{ selected: Boolean(isSelected) }}
       accessibilityHint="Double tap to play this card"
     >
       <Animated.View

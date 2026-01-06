@@ -130,8 +130,9 @@ export function chooseAiCardSmart({ hand, trick, leadSuit, trumpSuit, playerInde
   }
 
   if (position === 2) {
-    // Third to act: if partner winning, don't waste; otherwise try to win cheaply
-    if (isPartnerWinningNow()) {
+    // Third to act: conserve if partner is in a favorable position (either winning now or led the trick)
+    const partnerLedTrick = trick[0]?.player === partnerIndex;
+    if (isPartnerWinningNow() || partnerLedTrick) {
       // Conserve: play lowest following suit if possible; else discard lowest non-trump
       const follow = legal.filter(c => c.suit === leadSuit);
       if (follow.length > 0) return lowestCard(follow);
@@ -139,13 +140,24 @@ export function chooseAiCardSmart({ hand, trick, leadSuit, trumpSuit, playerInde
       if (nonTrump.length > 0) return lowestCard(nonTrump);
       return lowestCard(legal);
     }
-    // Partner not winning: try to win with minimal
+    // Otherwise try to win with minimal
     return pickWinningMinimal();
   }
 
   if (position === 3) {
     // Fourth to act: perfect info on current three cards
     if (isPartnerWinningNow()) {
+      // If we can win with a truly cheap card, consider taking control; otherwise conserve
+      const winning = legal.filter(card => simulateWinningIfPlayed(trick, card, trumpSuit, leadSuit));
+      if (winning.length > 0) {
+        const minimalWin = winning.sort((a, b) => getCardValue(a) - getCardValue(b))[0];
+        const minimalWinValue = getCardValue(minimalWin);
+        const isTrump = minimalWin.suit === trumpSuit;
+        // Heuristic: only overtake partner if it costs a low non-trump (<= 10). This keeps Aces and trumps for later.
+        if (!isTrump && minimalWinValue <= 10) {
+          return minimalWin;
+        }
+      }
       // Do not waste a high card: lowest legal (prefer follow suit low)
       const follow = legal.filter(c => c.suit === leadSuit);
       if (follow.length > 0) return lowestCard(follow);

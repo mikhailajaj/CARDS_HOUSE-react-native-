@@ -2,6 +2,7 @@ import React from 'react';
 import { render, waitFor, act } from '@testing-library/react-native';
 import GameScreen from '../../screens/GameScreen';
 import { SettingsProvider } from '../../utils/SettingsContext';
+import { ScoreHistoryProvider } from '../../utils/ScoreHistoryContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Mock navigation
@@ -22,11 +23,13 @@ jest.mock('@fortawesome/react-native-fontawesome', () => ({
   FontAwesomeIcon: 'FontAwesomeIcon',
 }));
 
-// Helper to wrap component with SettingsProvider
+// Helper to wrap component with both required providers
 const renderWithSettings = (component, settings = {}) => {
   return render(
     <SettingsProvider>
-      {component}
+      <ScoreHistoryProvider>
+        {component}
+      </ScoreHistoryProvider>
     </SettingsProvider>
   );
 };
@@ -117,9 +120,12 @@ describe('Player Timeout Functionality', () => {
           JSON.stringify({ playTimeout: timeout })
         );
         
+        // Render a screen that consumes settings to trigger load
+        renderWithSettings(<GameScreen navigation={mockNavigation} />);
+        
         // Verify settings load correctly
         await waitFor(() => {
-          expect(AsyncStorage.getItem).toHaveBeenCalled();
+          expect(AsyncStorage.getItem).toHaveBeenCalledWith('@tarneeb_settings');
         });
       }
     });

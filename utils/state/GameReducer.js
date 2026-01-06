@@ -276,11 +276,9 @@ export const gameReducer = (state, action) => {
       
       let nextState = {
         ...state,
-        players: state.players.map(p => 
-          p.id === playerIndex 
-            ? { ...p, hand: p.hand.filter(c => !(c.suit === card.suit && c.label === card.label)) }
-            : p
-        ),
+        // Do NOT remove the card from hand here; wait until animation completes
+        // Removal happens in ADD_CARD_TO_TRICK_AREA to keep the card visible during animation
+        players: state.players, 
         playing: {
           ...state.playing,
           currentTrick: newTrick,
@@ -583,6 +581,12 @@ export const gameReducer = (state, action) => {
       const { card: animatedCard, playerIndex: animatedPlayerIndex } = action.payload;
       return {
         ...state,
+        // Now remove the card from the player's hand after animation completes
+        players: state.players.map(p => 
+          p.id === animatedPlayerIndex 
+            ? { ...p, hand: p.hand.filter(c => !(c.suit === animatedCard.suit && c.label === animatedCard.label)) }
+            : p
+        ),
         animations: {
           ...state.animations,
           trickAreaCards: [...state.animations.trickAreaCards, {
