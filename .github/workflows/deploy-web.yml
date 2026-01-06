@@ -36,9 +36,12 @@ jobs:
         npm install
     
     - name: Export web build
-      run: npm run build:web
+      run: npm run build:web:gh-pages
       env:
         NODE_ENV: production
+    
+    - name: Add .nojekyll file
+      run: touch web-build/.nojekyll
     
     - name: Setup Pages
       uses: actions/configure-pages@v4
